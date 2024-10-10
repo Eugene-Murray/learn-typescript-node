@@ -1,1 +1,1 @@
-# type-script
+# TypeScript Utilities
