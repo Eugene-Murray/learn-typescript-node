@@ -9,6 +9,7 @@ import { createMappings } from "./auto-mapper/map";
 import { createMap } from "@automapper/core";
 
 import { prompt } from 'enquirer';
+import runThread from "./threads.mjs";
 
 const run = async () => {
 //   const response = await prompt({
@@ -24,7 +25,7 @@ const run = async () => {
         initial: 0,
         choices: [
           'zip folder',
-          'tea',
+          'threads',
           'pumpkin juice',
         ]
       });
@@ -40,8 +41,9 @@ const run = async () => {
             console.error('Error occurred while zipping.', err);
         });
         break;
-    case 'tea':
-        console.log('\x1b[32m%s\x1b[0m', 'tea');
+    case 'threads':
+        console.log('\x1b[32m%s\x1b[0m', 'lets so some threads');
+        runThread();
         break;
     case 'pumpkin juice':
         console.log('pumpkin juice');
