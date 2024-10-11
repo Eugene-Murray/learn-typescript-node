@@ -12,6 +12,7 @@ import { prompt } from "enquirer";
 import runThread from "./node-worker-threads/threads.mjs";
 import { concurrency1 } from "./effect/concurrency/concurrency1";
 import { mutex } from "./effect/concurrency/mutex";
+import { tracer } from "./logging/tracer";
 
 const run = async () => {
   //   const response = await prompt({
@@ -30,6 +31,7 @@ const run = async () => {
       "node worker threads",
       "effect - concurrency 1",
       "effect - mutex",
+      "logging - tracer"
     ],
   });
 
@@ -62,6 +64,10 @@ const run = async () => {
       console.log("\x1b[32m%s\x1b[0m", "effect - mutex");
       mutex.run();
       break;
+    case "logging - tracer":
+        console.log("\x1b[32m%s\x1b[0m", "logging - tracer");
+        tracer.run();
+        break;
     default:
       console.log("Invalid task");
   }
