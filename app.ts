@@ -9,8 +9,14 @@ import { createMappings } from "./auto-mapper/map";
 import { createMap } from "@automapper/core";
 
 // 1. Zip directory
-// zipDirectory('C:/Users/eugen/source/repos/Hacking/nodejs', 
-//      'C:/Users/eugen/source/repos/Hacking/nodejs.zip');
+zipDirectory('C:/Users/eugen/source/repos/Hacking/nodejs', 
+     'C:/Users/eugen/source/repos/Hacking/', 'nodejs').then((result) => {
+        console.log('Zipping operation completed.', result);
+     }).finally(() => {  
+        console.log('Zipping operation completed.');
+     }).catch((err) => {
+        console.error('Error occurred while zipping.', err);
+     });
 
 
 // 2. Decorators
