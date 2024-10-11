@@ -1,4 +1,4 @@
-import { zipDirectory } from "./zip-move-folder";
+import { zipDirectory } from "./fs-zip/zip-move-folder";
 import { Person } from "./entities/Person";
 import { UserService } from "./auto-mapper/user.service";
 import { cons } from "effect/List";
@@ -8,53 +8,66 @@ import { BioDto, UserDto } from "./entities/user.dto";
 import { createMappings } from "./auto-mapper/map";
 import { createMap } from "@automapper/core";
 
-import { prompt } from 'enquirer';
-import runThread from "./threads.mjs";
+import { prompt } from "enquirer";
+import runThread from "./node-worker-threads/threads.mjs";
+import { concurrency1 } from "./effect/concurrency/concurrency1";
+import { mutex } from "./effect/concurrency/mutex";
 
 const run = async () => {
-//   const response = await prompt({
-//     type: 'input',
-//     name: 'username',
-//     message: 'What is your username?'
-//   });
+  //   const response = await prompt({
+  //     type: 'input',
+  //     name: 'username',
+  //     message: 'What is your username?'
+  //   });
 
   const response1 = await prompt({
-        type: 'select',
-        name: 'task',
-        message: 'Select Task to run?',
-        initial: 0,
-        choices: [
-          'zip folder',
-          'threads',
-          'pumpkin juice',
-        ]
-      });
+    type: "select",
+    name: "task",
+    message: "Select Task to run?",
+    initial: 0,
+    choices: [
+      "zip folder",
+      "node worker threads",
+      "effect - concurrency 1",
+      "effect - mutex",
+    ],
+  });
 
-  switch(response1['task']) {
-    case 'zip folder':
-        zipDirectory('C:/Users/eugen/source/repos/Hacking/nodejs', 
-        'C:/Users/eugen/source/repos/Hacking/', 'nodejs').then((result) => {
-            console.log('Zipping operation completed.', result);
-        }).finally(() => {  
-            console.log('Zipping operation completed.');
-        }).catch((err) => {
-            console.error('Error occurred while zipping.', err);
+  switch (response1["task"]) {
+    case "zip folder":
+      zipDirectory(
+        "C:/Users/eugen/source/repos/Hacking/nodejs",
+        "C:/Users/eugen/source/repos/Hacking/",
+        "nodejs"
+      )
+        .then((result) => {
+          console.log("Zipping operation completed.", result);
+        })
+        .finally(() => {
+          console.log("Zipping operation completed.");
+        })
+        .catch((err) => {
+          console.error("Error occurred while zipping.", err);
         });
-        break;
-    case 'threads':
-        console.log('\x1b[32m%s\x1b[0m', 'lets so some threads');
-        runThread();
-        break;
-    case 'pumpkin juice':
-        console.log('pumpkin juice');
-        break;
+      break;
+    case "threads":
+      console.log("\x1b[32m%s\x1b[0m", "lets so some threads");
+      runThread();
+      break;
+    case "effect - concurrency 1":
+      console.log("\x1b[32m%s\x1b[0m", "effect - concurrency 1");
+      concurrency1.run();
+      break;
+    case "effect - mutex":
+      console.log("\x1b[32m%s\x1b[0m", "effect - mutex");
+      mutex.run();
+      break;
     default:
-        console.log('Invalid task');
+      console.log("Invalid task");
   }
 };
 
 run();
-
 
 // const askDrink = new Enquirer.Prompt({
 //     type: 'select',
@@ -73,20 +86,18 @@ run();
 //     //const drink = await askDrink.run();
 //     //console.log(`${name} would like a cup of ${drink}`);
 //   }
-  
+
 //   run();
 
-
 // 1. Zip directory
-// zipDirectory('C:/Users/eugen/source/repos/Hacking/nodejs', 
+// zipDirectory('C:/Users/eugen/source/repos/Hacking/nodejs',
 //      'C:/Users/eugen/source/repos/Hacking/', 'nodejs').then((result) => {
 //         console.log('Zipping operation completed.', result);
-//      }).finally(() => {  
+//      }).finally(() => {
 //         console.log('Zipping operation completed.');
 //      }).catch((err) => {
 //         console.error('Error occurred while zipping.', err);
 //      });
-
 
 // 2. Decorators
 // const p = new Person("Black Adder");

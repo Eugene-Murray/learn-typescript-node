@@ -1,4 +1,4 @@
-import { logMethod } from "../decorators";
+import { logMethod } from "../decorators/decorators";
 
 export class Person {
     name: string;
