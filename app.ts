@@ -13,6 +13,7 @@ import runThread from "./node-worker-threads/threads.mjs";
 import { concurrency1 } from "./effect/concurrency/concurrency1";
 import { mutex } from "./effect/concurrency/mutex";
 import { tracer } from "./logging/tracer";
+import { ZodBasic1 } from "./zod/zod-basic1";
 
 const run = async () => {
   //   const response = await prompt({
@@ -31,7 +32,8 @@ const run = async () => {
       "node worker threads",
       "effect - concurrency 1",
       "effect - mutex",
-      "logging - tracer"
+      "logging - tracer",
+      "zod - basic1",
     ],
   });
 
@@ -65,9 +67,13 @@ const run = async () => {
       mutex.run();
       break;
     case "logging - tracer":
-        console.log("\x1b[32m%s\x1b[0m", "logging - tracer");
-        tracer.run();
-        break;
+      console.log("\x1b[32m%s\x1b[0m", "logging - tracer");
+      tracer.run();
+      break;
+    case "zod - basic1":
+      console.log("\x1b[32m%s\x1b[0m", "zod - basic1");
+      ZodBasic1.run();
+      break;
     default:
       console.log("Invalid task");
   }
