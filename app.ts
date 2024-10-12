@@ -15,27 +15,33 @@ import { mutex } from "./effect/concurrency/mutex";
 import { tracer } from "./logging/tracer";
 import { ZodBasic1 } from "./zod/zod-basic1";
 
-const run = async () => {
+
+const createPromt = async (): Promise<object> => {
+    return prompt({
+        type: "select",
+        name: "task",
+        message: "Select Task to run?",
+        initial: 0,
+        choices: [
+          "zip folder",
+          "node worker threads",
+          "effect - concurrency 1",
+          "effect - mutex",
+          "logging - tracer",
+          "zod - basic1",
+        ],
+      });
+}
+
+
+const runApp = async () => {
   //   const response = await prompt({
   //     type: 'input',
   //     name: 'username',
   //     message: 'What is your username?'
   //   });
 
-  const response1 = await prompt({
-    type: "select",
-    name: "task",
-    message: "Select Task to run?",
-    initial: 0,
-    choices: [
-      "zip folder",
-      "node worker threads",
-      "effect - concurrency 1",
-      "effect - mutex",
-      "logging - tracer",
-      "zod - basic1",
-    ],
-  });
+  const response1 = await createPromt();
 
   switch (response1["task"]) {
     case "zip folder":
@@ -49,6 +55,7 @@ const run = async () => {
         })
         .finally(() => {
           console.log("Zipping operation completed.");
+          runApp()
         })
         .catch((err) => {
           console.error("Error occurred while zipping.", err);
@@ -79,7 +86,10 @@ const run = async () => {
   }
 };
 
-run();
+runApp();
+
+
+
 
 // const askDrink = new Enquirer.Prompt({
 //     type: 'select',
