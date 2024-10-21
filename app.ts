@@ -15,7 +15,7 @@ import { mutex } from "./effect/concurrency/mutex";
 import { tracer } from "./logging/tracer";
 import { ZodBasic1 } from "./zod/zod-basic1";
 import { prismaData } from "./orm/prisma/prisma-data";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -94,6 +94,9 @@ const runApp = async () => {
           console.error(e)
           await prisma.$disconnect()
           process.exit(1)
+        })
+        .finally(() => {  
+          runApp();
         })
         break;
     default:
