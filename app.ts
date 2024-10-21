@@ -14,7 +14,10 @@ import { concurrency1 } from "./effect/concurrency/concurrency1";
 import { mutex } from "./effect/concurrency/mutex";
 import { tracer } from "./logging/tracer";
 import { ZodBasic1 } from "./zod/zod-basic1";
+import { prismaData } from "./orm/prisma/prisma-data";
+import { PrismaClient } from '@prisma/client'
 
+const prisma = new PrismaClient();
 
 const createPromt = async (): Promise<object> => {
     return prompt({
@@ -29,6 +32,7 @@ const createPromt = async (): Promise<object> => {
           "effect - mutex",
           "logging - tracer",
           "zod - basic1",
+          "prisma",
         ],
       });
 }
@@ -81,6 +85,17 @@ const runApp = async () => {
       console.log("\x1b[32m%s\x1b[0m", "zod - basic1");
       ZodBasic1.run();
       break;
+    case "prisma":
+        console.log("\x1b[32m%s\x1b[0m", "prisma");
+        prismaData.run().then(async () => {
+          await prisma.$disconnect()
+        })
+        .catch(async (e) => {
+          console.error(e)
+          await prisma.$disconnect()
+          process.exit(1)
+        })
+        break;
     default:
       console.log("Invalid task");
   }
