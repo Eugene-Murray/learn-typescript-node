@@ -15,31 +15,36 @@ import { mutex } from "./effect/concurrency/mutex";
 import { tracer } from "./logging/tracer";
 import { ZodBasic1 } from "./zod/zod-basic1";
 import { prismaData } from "./orm/prisma/prisma-data";
-import { PrismaClient } from '@prisma/client';
-import { QueuesZeromqProducer } from "./queues/zeromq/producer";
-import { QueuesZeromqWorker } from "./queues/zeromq/worker";
+import { PrismaClient } from "@prisma/client";
+import { QueuesZeromqProducer } from "./queues/zeromq/push-pull/producer";
+import { QueuesZeromqWorker } from "./queues/zeromq/push-pull/worker";
+import { QueuesZeromqSubscriber } from "./queues/zeromq/pub-sub/subscriber";
+import { QueuesZeromqPublisher } from "./queues/zeromq/pub-sub/publisher";
+import { QueuesZeromqServer } from "./queues/zeromq/req-rep/server";
+import { QueuesZeromqClient } from "./queues/zeromq/req-rep/client";
 
 const prisma = new PrismaClient();
 
 const createPromt = async (): Promise<object> => {
-    return prompt({
-        type: "select",
-        name: "task",
-        message: "Select Task to run?",
-        initial: 0,
-        choices: [
-          "zip folder",
-          "node worker threads",
-          "effect - concurrency 1",
-          "effect - mutex",
-          "logging - tracer",
-          "zod - basic1",
-          "prisma",
-          'queues - zeromq',
-        ],
-      });
-}
-
+  return prompt({
+    type: "select",
+    name: "task",
+    message: "Select Task to run?",
+    initial: 0,
+    choices: [
+      "zip folder",
+      "node worker threads",
+      "effect - concurrency 1",
+      "effect - mutex",
+      "logging - tracer",
+      "zod - basic1",
+      "prisma",
+      "queues - zeromq - producer/worker",
+      "queues - zeromq - publisher/subscriber",
+      "queues - zeromq - request/reply",
+    ],
+  });
+};
 
 const runApp = async () => {
   //   const response = await prompt({
@@ -62,7 +67,7 @@ const runApp = async () => {
         })
         .finally(() => {
           console.log("Zipping operation completed.");
-          runApp()
+          runApp();
         })
         .catch((err) => {
           console.error("Error occurred while zipping.", err);
@@ -89,33 +94,42 @@ const runApp = async () => {
       ZodBasic1.run();
       break;
     case "prisma":
-        console.log("\x1b[32m%s\x1b[0m", "prisma");
-        prismaData.run().then(async () => {
-          await prisma.$disconnect()
+      console.log("\x1b[32m%s\x1b[0m", "prisma");
+      prismaData
+        .run()
+        .then(async () => {
+          await prisma.$disconnect();
         })
         .catch(async (e) => {
-          console.error(e)
-          await prisma.$disconnect()
-          process.exit(1)
+          console.error(e);
+          await prisma.$disconnect();
+          process.exit(1);
         })
-        .finally(() => {  
+        .finally(() => {
           runApp();
-        })
+        });
+      break;
+    case "queues - zeromq - producer/worker":
+      console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
+      QueuesZeromqProducer.run();
+      QueuesZeromqWorker.run();
+      break;
+    case "queues - zeromq - publisher/subscriber":
+      console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
+      QueuesZeromqPublisher.run();
+      QueuesZeromqSubscriber.run();
+      break;
+    case "queues - zeromq - request/reply":
+        console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
+        QueuesZeromqServer.run();
+        QueuesZeromqClient.run();
         break;
-    case "queues - zeromq":
-          console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
-          QueuesZeromqProducer.run();
-          QueuesZeromqWorker.run();
-          break;
     default:
       console.log("Invalid task");
   }
 };
 
 runApp();
-
-
-
 
 // const askDrink = new Enquirer.Prompt({
 //     type: 'select',
