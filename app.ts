@@ -16,6 +16,8 @@ import { tracer } from "./logging/tracer";
 import { ZodBasic1 } from "./zod/zod-basic1";
 import { prismaData } from "./orm/prisma/prisma-data";
 import { PrismaClient } from '@prisma/client';
+import { QueuesZeromqProducer } from "./queues/zeromq/producer";
+import { QueuesZeromqWorker } from "./queues/zeromq/worker";
 
 const prisma = new PrismaClient();
 
@@ -33,6 +35,7 @@ const createPromt = async (): Promise<object> => {
           "logging - tracer",
           "zod - basic1",
           "prisma",
+          'queues - zeromq',
         ],
       });
 }
@@ -99,6 +102,11 @@ const runApp = async () => {
           runApp();
         })
         break;
+    case "queues - zeromq":
+          console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
+          QueuesZeromqProducer.run();
+          QueuesZeromqWorker.run();
+          break;
     default:
       console.log("Invalid task");
   }
