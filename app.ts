@@ -22,6 +22,7 @@ import { QueuesZeromqSubscriber } from "./queues/zeromq/pub-sub/subscriber";
 import { QueuesZeromqPublisher } from "./queues/zeromq/pub-sub/publisher";
 import { QueuesZeromqServer } from "./queues/zeromq/req-rep/server";
 import { QueuesZeromqClient } from "./queues/zeromq/req-rep/client";
+import { TsyringeSimple } from "./dependency-injection/tsyringe/simple";
 
 const prisma = new PrismaClient();
 
@@ -42,6 +43,7 @@ const createPromt = async (): Promise<object> => {
       "queues - zeromq - producer/worker",
       "queues - zeromq - publisher/subscriber",
       "queues - zeromq - request/reply",
+      "dependency injection - tsyringe - simple",
     ],
   });
 };
@@ -123,6 +125,10 @@ const runApp = async () => {
         console.log("\x1b[32m%s\x1b[0m", "queues - zeromq");
         QueuesZeromqServer.run();
         QueuesZeromqClient.run();
+        break;
+    case "dependency injection - tsyringe - simple":
+        console.log("\x1b[32m%s\x1b[0m", "dependency injection - tsyringe - simple");
+        TsyringeSimple.run();
         break;
     default:
       console.log("Invalid task");
